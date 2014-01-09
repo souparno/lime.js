@@ -1,3 +1,14 @@
+/************************************************************************************
+                                 AJAX THREADS
+
+   This is a simple ajax class implemented with the OOPS in javascript
+   Acknowledment: Chris Marshall
+   Developed By : Souparno Majumder 
+   Copyright    : Go ahead and use this as you wish.  ©2014-2015
+
+
+*************************************************************************************/
+
 
 function SimpleAJAX() {
 
@@ -15,11 +26,15 @@ function SimpleAJAX() {
     };
 
 
-    this.post = function post(Url,Parameter,CallBack) {
+    this.post = function post(Url,Parameter,CallBack,TimeOutCallBack,TimeOut) {
         var XmlHttpRequstObject = this.MakeNewRequestObject();
         XmlHttpRequstObject.open("POST", Url, true);
         XmlHttpRequstObject.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        XmlHttpRequstObject.onreadystatechange=function(){  new SimpleAJAX().statechanged(this,CallBack);/* The 'this' key refers to the XmlHttpRequstObject */   };
+        XmlHttpRequstObject.onreadystatechange=function(){  new SimpleAJAX().statechanged(this,CallBack);/* The 'this' key refers to the XmlHttpRequstObject */ };
+        setTimeout(function(){
+                               XmlHttpRequstObject.abort();
+                               TimeOutCallBack(Parameter);
+                              },TimeOut*1000);
         XmlHttpRequstObject.send(encodeURI(Parameter));
 
     };
@@ -44,11 +59,3 @@ function SimpleAJAX() {
 };
 
 
-
-/*var abcd=new SimpleAJAX();
-abcd.post('server.php','',hello);
-
-
-function hello(responsetxt){
- alert(responsetxt);
-};*/
