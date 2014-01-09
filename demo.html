@@ -154,9 +154,10 @@
 				//var	url='server.php?delay='+parseInt(document.getElementById('delay_text').value)+"&id="+in_id+'#'+eDate.getTime();
 				//var log_string = "<br /><strong>Making an HTTPRequest</strong><br />\n&nbsp;&nbsp;&nbsp;Param: "+in_id+"<br />\n&nbsp;&nbsp;&nbsp;URL: "+url;
 				// We set a ten-second timeout for this demo.
+                                var url="server.php";
                                 var parameter="id="+in_id;
                                 var obj=new SimpleAJAX();
-                                obj.post('server.php',parameter,SetPhase4);
+                                obj.post(url,parameter,SetPhase4,TimeoutCallback,5);
 				//var index = MakeNewAJAXCall(url, SimpleCallback, 'GET', ComplexCallback, in_id, eDate.getTime(), TimeoutCallback, 10);
 				//log_string += "<br />\n&nbsp;&nbsp;&nbsp;Index: "+index+"\n"
 				//MakeLogEntry(log_string);
@@ -213,11 +214,9 @@
 					in_index:	This is the index of the request. This can be
 									used to directly index the request array.
 			*/
-			function TimeoutCallback(in_param, in_param2, in_index){
-				SetPhase4 ( in_param );
-				var log_string = "<strong>Timeout Callback</strong><br />\n&nbsp;&nbsp;&nbsp;Index: "+in_index+"<br />\n";
-				MakeLogEntry(log_string);
-				alert ( "Timeout! ("+in_index+")" );
+			function TimeoutCallback(in_index){
+				SetPhase4 (in_index.substring(3));
+				//alert ( "Timeout! ("+in_index.substring(3)+")" );
 			}
 	
 			/*****************************************************************
