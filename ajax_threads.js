@@ -2,17 +2,49 @@
                                  AJAX THREADS
 
    This is a simple ajax class implemented with the OOPS in javascript
-   Acknowledment: Chris Marshall
+   Version      : 1.0
    Developed By : Souparno Majumder 
    Copyright    : Go ahead and use this as you wish.  ©2014-2015
+ ************************************************************************************/
 
+// The AjaxBusy variable checks to see if any ajax request is taking place
+// 0 denotes the ajax is free,1 represents the ajax is busy
+// By default the status of the ajax request is 0
+var AjaxBusy=0;
+/***********************************************************************************
+   The Argument passed to the SimpleAJAX function is JSON encoded(JAVASCRIPT OBJECT NOTATION)
+	Parameters: 
+                Arguments :JSON object to hold the following OBJECT VARIABLE
+		{
+                    RequestVerb           : 'POST'/'GET',
+                    RequestUrl            : The server side pageurl,
+                    Parameters            : The parameters to be supplied to the server,
+                    CallbackMethod        : The method to be called on a successful request complete,  
+                    TimeOutCallBackMethod : The method to be called on TimeOut
+                    TimeOut               : Timeout in seconds
+                }
+ ***********************************************************************************/
+function SimpleAJAX(Arguments) {
+  
+  // Variable to hold the object that is referring to the class.
+  var PresentInstance=this;
+    
+  this.RequestVerb           = Arguments.RequestVerb.toUpperCase();;
+  this.RequestUrl            = Arguments.RequestUrl;
+  this.Parameters            = Arguments.Parameters;
+  this.CallbackMethod        = Arguments.CallbackMethod;
+  this.TimeOutCallBackMethod = Arguments.TimeOutCallBackMethod;
+  this.TimeOut               = Arguments.TimeOut;
 
-*************************************************************************************/
+  
+/****************************************************************
+	Constructs a new HTTP Request object. IE and the rest of the
+	world have different ideas about what constitutes an HTTP
+	Request class, so we deal with that here.
 
-
-function SimpleAJAX() {
-
-   this.MakeNewRequestObject = function MakeNewRequestObject() {
+	Function Return: A new HTTP request object.
+****************************************************************/
+   this.MakeNewRequestObject = function() {
        try { return new ActiveXObject("Msxml2.XMLHTTP"); }
         catch (e) {
             try { return new ActiveXObject("Microsoft.XMLHTTP"); }
@@ -25,21 +57,35 @@ function SimpleAJAX() {
         }
     };
 
-
-    this.post = function post(Url,Parameter,CallBack,TimeOutCallBack,TimeOut) {
+/****************************************************************
+	Here is where the actual call is made to the server.
+*****************************************************************/
+    this.SendHTTPRequest = function() {
+        AjaxBusy=1;// setting the AjaxBusy to true signifies an ajax request is on process
         var XmlHttpRequstObject = this.MakeNewRequestObject();
-        XmlHttpRequstObject.open("POST", Url, true);
-        XmlHttpRequstObject.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        XmlHttpRequstObject.onreadystatechange=function(){  new SimpleAJAX().statechanged(this,CallBack);/* The 'this' key refers to the XmlHttpRequstObject */ };
+        XmlHttpRequstObject.open(this.RequestVerb,this.RequestUrl, true);
+        switch(this.RequestVerb){
+          case 'POST':
+           XmlHttpRequstObject.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+           break;
+         default:
+	   break;
+                }
+        XmlHttpRequstObject.onreadystatechange=function(){ PresentInstance.RequstObjectStateChanged(this);};
         setTimeout(function(){
+                               AjaxBusy=0;// Freeing the AjaxBusy varible
                                XmlHttpRequstObject.abort();
-                               TimeOutCallBack(Parameter);
-                              },TimeOut*1000);
-        XmlHttpRequstObject.send(encodeURI(Parameter));
+                               PresentInstance.TimeOutCallBackMethod(PresentInstance.Parameters);
+                              },this.TimeOut*1000);
+        XmlHttpRequstObject.send(encodeURI(this.Parameters));
 
     };
-
-   this.statechanged=function statechanged(XmlHttpRequstObject,CallBack){
+/*********************************************************************************************
+  Here is where the onreadystatechange event of the ajaxrequestobject is handled.
+  Parameters: 
+  XmlHttpRequstObject : The present instance of the XmlHttp object passed to the function
+**********************************************************************************************/
+   this.RequstObjectStateChanged=function(XmlHttpRequstObject){
         switch (XmlHttpRequstObject.readyState) {
             case 0: // UNINITIALIZED
                 break;
@@ -51,7 +97,8 @@ function SimpleAJAX() {
                 break;
             case 4: //COMPLETED
                 if (XmlHttpRequstObject.status === 200) {
-                   CallBack(XmlHttpRequstObject.responseText);
+                    AjaxBusy=0;// Freeing the AjaxBusy varible
+                    PresentInstance.CallbackMethod(XmlHttpRequstObject.responseText);
                 }
                 break;
         }

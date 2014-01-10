@@ -149,19 +149,19 @@
 			*/
 			function BangOnAButton(in_id){
 				SetPhase0(in_id);
-				//var	eDate = new Date();
-				// The time thing ensures that each call will be unique, and stops caching.
-				//var	url='server.php?delay='+parseInt(document.getElementById('delay_text').value)+"&id="+in_id+'#'+eDate.getTime();
-				//var log_string = "<br /><strong>Making an HTTPRequest</strong><br />\n&nbsp;&nbsp;&nbsp;Param: "+in_id+"<br />\n&nbsp;&nbsp;&nbsp;URL: "+url;
-				// We set a ten-second timeout for this demo.
-                                var url="server.php";
-                                var parameter="id="+in_id;
-                                var obj=new SimpleAJAX();
-                                obj.post(url,parameter,SetPhase4,TimeoutCallback,5);
-				//var index = MakeNewAJAXCall(url, SimpleCallback, 'GET', ComplexCallback, in_id, eDate.getTime(), TimeoutCallback, 10);
-				//log_string += "<br />\n&nbsp;&nbsp;&nbsp;Index: "+index+"\n"
-				//MakeLogEntry(log_string);
-			}
+                                //var url="server.php";
+                                //var parameter="id="+in_id;
+                                var obj=new SimpleAJAX({ 
+                                                    RequestVerb: 'POST',
+                                                    RequestUrl: 'server.php',
+                                                    Parameters: "id="+in_id,
+                                                    CallbackMethod:SetPhase4,
+                                                    TimeOutCallBackMethod:TimeoutCallback,
+                                                    TimeOut:'5'
+                                                       });
+                                obj.SendHTTPRequest();
+                                //obj.post(url,parameter,SetPhase4,TimeoutCallback,5);
+				};
 			
 			/*****************************************************************
 				This is the "simple" callback that is made at the completion of
@@ -215,6 +215,7 @@
 									used to directly index the request array.
 			*/
 			function TimeoutCallback(in_index){
+                            //alert(in_index);
 				SetPhase4 (in_index.substring(3));
 				//alert ( "Timeout! ("+in_index.substring(3)+")" );
 			}
