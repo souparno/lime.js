@@ -96,8 +96,8 @@ function SimpleAJAX(Arguments) {
             case 3: // INTERACTIVE
                 break;
             case 4: //COMPLETED
+                AjaxBusy=0;// Freeing the AjaxBusy varible
                 if (XmlHttpRequstObject.status === 200) {
-                    AjaxBusy=0;// Freeing the AjaxBusy varible
                     PresentInstance.CallbackMethod(XmlHttpRequstObject.responseText);
                 }
                 break;
