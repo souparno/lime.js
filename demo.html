@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -104,17 +103,35 @@
                 <script src="ajax_threads.js" type="text/javascript"></script>
 		<!-- These are our internal functions for running the tests. -->
 		<script type="text/javascript">
-		// <![CDATA[
-			var	g_number_of_images = 144;	// This is how many triggers we'll display.
-			
+                    
+                    var	g_number_of_images = 144;	// This is how many triggers we'll display.
+                    
 			/*****************************************************************
+				This draws all of the buttons on the page, assigning IDs.
+			******************************************************************/
+			function PopulateTriggers(){
+				if(SupportsAjax()){
+					var form_contents='<h3 title="The images below represent individual HTTPRequests. Click on a button to start a request." style="text-align:center;margin:0;padding:0;padding-bottom:4px">Click on an image to start an HTTPRequest</h3>';
+					var javascript_eval='';
+					for(var i=0; i<g_number_of_images; i++){
+						var id="button_"+i;
+						var html_contents='<div class="button_wrapper"><a title="Click here to start Button #'+i+' going." href="javascript:BangOnAButton(\''+id+'\')" id="'+id+'_link"></a></div>'+"\n";
+						form_contents += html_contents;
+					}
+					
+					form_contents += '<div style="clear:both"><form action="#" onsubmit="Trigger_All();return false" method="get"><div style="text-align:center; padding-top:8px;padding-bottom:4px"><input title="If you press this button, ALL of the triggers will be thrown. This will take a long time to finish." type="submit" value="Trigger All Of Them (Takes Forever)" /></div></form></div>';
+				}else{form_contents="<strong>AJAX Not Supported!</strong>"}
+				
+				document.getElementById('trigger_form').innerHTML = form_contents;
+			}
+                       /*****************************************************************
 				This changes the link (so it can't be clicked), and displays the
 				animated "in progress" image.
 				
 				Parameters:
 					in_id:	The DOM ID of the trigger. The link will be the same
 								ID, with "_link" appended to it.
-			*/
+			******************************************************************/
 			function SetPhase0(in_id){
 				// We force this here, because IE6 and 7 won't honor className changes unless I do this.
 				document.getElementById(in_id+"_link").style.backgroundImage = "url(images/notready.gif)";
@@ -129,7 +146,7 @@
 				Parameters:
 					in_id:	The DOM ID of the image. The link will be the same
 								ID, with "_link" appended to it.
-			*/
+			*******************************************************************/
 			function SetPhase4(in_id){
                			var id = in_id;
 				document.getElementById(in_id+"_link").style.backgroundImage = "";
@@ -146,39 +163,28 @@
 				Parameters:
 					in_id:	The DOM ID of the image. The link will be the same
 								ID, with "_link" appended to it.
-			*/
+			*******************************************************************/
 			function BangOnAButton(in_id){
 				SetPhase0(in_id);
-                                //var url="server.php";
-                                //var parameter="id="+in_id;
-                                var obj=new SimpleAJAX({ 
-                                                    RequestVerb: 'POST',
-                                                    RequestUrl: 'server.php',
-                                                    Parameters: "id="+in_id,
-                                                    CallbackMethod:SetPhase4,
-                                                    TimeOutCallBackMethod:TimeoutCallback,
-                                                    TimeOut:'5'
-                                                       });
+                                var obj=new AJAX({ 
+                                                RequestVerb: 'POST',
+                                                RequestUrl: 'server.php',
+                                                Parameters: "id="+in_id,
+                                                CallbackMethod:SimpleCallback,
+                                                TimeOutCallBackMethod:TimeoutCallback,
+                                                TimeOut:'5'
+                                                  });
                                 obj.SendHTTPRequest();
-                                //obj.post(url,parameter,SetPhase4,TimeoutCallback,5);
 				};
-			
 			/*****************************************************************
 				This is the "simple" callback that is made at the completion of
 				the HTTPRequest.
 				
 				Parameters:
-					in_text:        The request result text.
-					in_param:	This is the first of the two "extra" parameters
-									that were supplied when the call was made.
-					in_param2:	This is the second of the two parameters.
-			*/
-			function SimpleCallback(in_text, in_param, in_param2){
+					in_param: The response obtained on call success
+			*******************************************************************/
+			function SimpleCallback(in_param){
 				SetPhase4(in_param);
-				var	eDate = new Date();
-				var time_spent = parseInt ((eDate.getTime() - in_param2) / 100) / 10;
-				var log_string = "<strong>Simple Callback</strong><br />\n&nbsp;&nbsp;&nbsp;Response: '"+in_text+"'<br />\n&nbsp;&nbsp;&nbsp;Param: '"+in_param+"'<br />\n&nbsp;&nbsp;&nbsp;This request took "+time_spent+" seconds to complete.";
-				MakeLogEntry(log_string);
 			}
 	
 			/*****************************************************************
@@ -208,83 +214,13 @@
 				This is the "timeout" callback.
 				
 				Parameters:
-					in_param:	This is the first of the two "extra" parameters
-									that were supplied when the call was made.
-					in_param2:	This is the second of the two parameters.
-					in_index:	This is the index of the request. This can be
-									used to directly index the request array.
-			*/
-			function TimeoutCallback(in_index){
-                            //alert(in_index);
-				SetPhase4 (in_index.substring(3));
-				//alert ( "Timeout! ("+in_index.substring(3)+")" );
+					in_param: This is the parameter that were supplied 
+                                        when the call was made.
+			******************************************************************/
+			function TimeoutCallback(in_param){
+				SetPhase4 (in_param.substring(3));
+				alert ( "Timeout! ("+in_param.substring(3)+")" );
 			}
-	
-			/*****************************************************************
-				This simply displays the given text in the log. It checks to
-				see if there is supposed to be a displayed log. If not, then
-				nothing happens. If this is the first entry, then a header is
-				displayed.
-				
-				Parameters:
-					in_text:	The text to be displayed (raw HTML)
-			*/
-			function MakeLogEntry ( in_text ){
-				if ( document.getElementById('log_check').checked ){
-					var old_val = document.getElementById('ajax_log').innerHTML;
-					var newval;
-					if (!old_val){
-						newval = '<hr /><h3 style="margin:0;padding:0">Event Log</h3>'+"\n"+in_text;
-					} else {
-						newval = old_val+"<br />\n"+in_text;
-					}
-					document.getElementById('ajax_log').style.display = 'none'; 
-					document.getElementById('ajax_log').innerHTML = newval;
-					document.getElementById('ajax_log').style.display = 'block'; 
-				}
-			}
-			
-			/*****************************************************************
-				This simply goes through the entire list, and triggers every
-				single button.
-			*/
-			function Trigger_All(){
-				for(var i=0; i<g_number_of_images; i++){
-					BangOnAButton("button_"+i);
-				}
-			}
-			
-			/*****************************************************************
-				This draws all of the buttons on the page, assigning IDs.
-			*/
-			function PopulateTriggers(){
-				if(true){
-					var form_contents='<h3 title="The images below represent individual HTTPRequests. Click on a button to start a request." style="text-align:center;margin:0;padding:0;padding-bottom:4px">Click on an image to start an HTTPRequest</h3>';
-					var javascript_eval='';
-					for(var i=0; i<g_number_of_images; i++){
-						var id="button_"+i;
-						var html_contents='<div class="button_wrapper"><a title="Click here to start Button #'+i+' going." href="javascript:BangOnAButton(\''+id+'\')" id="'+id+'_link"></a></div>'+"\n";
-						form_contents += html_contents;
-					}
-					
-					form_contents += '<div style="clear:both"><form action="#" onsubmit="Trigger_All();return false" method="get"><div style="text-align:center; padding-top:8px;padding-bottom:4px"><input title="If you press this button, ALL of the triggers will be thrown. This will take a long time to finish." type="submit" value="Trigger All Of Them (Takes Forever)" /></div></form></div>';
-				}else{form_contents="<strong>AJAX Not Supported!</strong>";}
-				
-				document.getElementById('trigger_form').innerHTML = form_contents;
-			};
-			
-			/*****************************************************************
-				The main reason for this is to clear the log.
-			*/
-			function SetLog(){
-				if(!document.getElementById('log_check').checked){
-					// This forces IE to flush its cache.
-					document.getElementById('ajax_log').style.display = 'none'; 
-					document.getElementById('ajax_log').innerHTML = '';
-					document.getElementById('ajax_log').style.display = 'block'; 
-				}
-			}
-		// ]]>
 		</script>
 	</head>
 	<body>

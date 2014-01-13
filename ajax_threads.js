@@ -24,12 +24,12 @@ var AjaxBusy=0;
                     TimeOut               : Timeout in seconds
                 }
  ***********************************************************************************/
-function SimpleAJAX(Arguments) {
+function AJAX(Arguments) {
   
   // Variable to hold the object that is referring to the class.
   var PresentInstance=this;
     
-  this.RequestVerb           = Arguments.RequestVerb.toUpperCase();;
+  this.RequestVerb           = Arguments.RequestVerb.toUpperCase();
   this.RequestUrl            = Arguments.RequestUrl;
   this.Parameters            = Arguments.Parameters;
   this.CallbackMethod        = Arguments.CallbackMethod;
@@ -51,7 +51,7 @@ function SimpleAJAX(Arguments) {
             catch (e) {
                 try { return new XMLHttpRequest(); }
                 catch (e) {
-                    return false;
+                    return null;
                 }
             }
         }
@@ -105,4 +105,27 @@ function SimpleAJAX(Arguments) {
     };
 };
 
-
+/*******************************************************************************
+                  SupportsAjax function
+ Purpose : can be used to check if the browser supports Ajax or not
+ ******************************************************************************/
+if (typeof SupportsAjax === 'undefined'){	
+	function SupportsAjax ( ) {
+		var test_obj = new AJAX({ 
+                                          RequestVerb: '',
+                                          RequestUrl: '',
+                                          Parameters:'',
+                                          CallbackMethod:'',
+                                          TimeOutCallBackMethod:'',
+                                          TimeOut:''
+                                        }).MakeNewRequestObject();
+		
+		if ( test_obj ) {
+			test_obj = null;
+			return true;
+			}
+		
+		test_obj = null;
+		return false;
+	};
+}
