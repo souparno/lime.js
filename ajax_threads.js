@@ -1,5 +1,5 @@
 /************************************************************************************
-                                 AJAX THREADS
+                                   AJAX 
 
    This is a simple ajax class implemented with the OOPS in javascript
    Version      : 1.0
@@ -71,12 +71,12 @@ function AJAX(Arguments) {
          default:
 	   break;
                 }
-        XmlHttpRequstObject.onreadystatechange=function(){ PresentInstance.RequstObjectStateChanged(this);};
-        setTimeout(function(){
+        var AjaxTimeOut= setTimeout(function(){
                                AjaxBusy=0;// Freeing the AjaxBusy varible
                                XmlHttpRequstObject.abort();
                                PresentInstance.TimeOutCallBackMethod(PresentInstance.Parameters);
                               },this.TimeOut*1000);
+        XmlHttpRequstObject.onreadystatechange=function(){ PresentInstance.RequstObjectStateChanged(this,AjaxTimeOut);};
         XmlHttpRequstObject.send(encodeURI(this.Parameters));
 
     };
@@ -85,7 +85,7 @@ function AJAX(Arguments) {
   Parameters: 
   XmlHttpRequstObject : The present instance of the XmlHttp object passed to the function
 **********************************************************************************************/
-   this.RequstObjectStateChanged=function(XmlHttpRequstObject){
+   this.RequstObjectStateChanged=function(XmlHttpRequstObject,AjaxTimeOut){
         switch (XmlHttpRequstObject.readyState) {
             case 0: // UNINITIALIZED
                 break;
@@ -98,6 +98,7 @@ function AJAX(Arguments) {
             case 4: //COMPLETED
                 AjaxBusy=0;// Freeing the AjaxBusy varible
                 if (XmlHttpRequstObject.status === 200) {
+                    clearTimeout(AjaxTimeOut);
                     PresentInstance.CallbackMethod(XmlHttpRequstObject.responseText);
                 }
                 break;
