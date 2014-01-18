@@ -8,11 +8,12 @@ Ajax options - The Ajax classe constitutes some set of options and callbacks
 
 Common options
 -----------------------------------------------------------------------------------------------------
-RequestVerb (String): The HTTP method to use for the request(get/post).
-RequestUrl  (String): The server page url.
-Parameters  (String): The parameters for the request.
-TimeOut     (String): The timeout for the request.
-
+<ul>
+<li>RequestVerb (String): The HTTP method to use for the request(get/post).</li>
+<li>RequestUrl  (String): The server page url.</li>
+<li>Parameters  (String): The parameters for the request.</li>
+<li>TimeOut     (String): The timeout for the request.</li>
+</ul>
 
 Common callbacks
 ----------------------------------------------------------------------------------------------------
@@ -22,5 +23,5 @@ TimeOutCallBackMethod : Invoked when a request gets timed out before its lifecyc
 
 
 Examples:
-The folder includes an example of Ajax Queuing/Ajax Threading
+<b>The folder includes an example of Ajax Queuing/Ajax Threading</b>
 
