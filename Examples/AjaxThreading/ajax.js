@@ -1,6 +1,4 @@
 /************************************************************************************
-AJAX 
-
 This is a simple ajax class implemented with the OOPS in javascript
 Version      : 1.0
 Developed By : Souparno Majumder 
@@ -12,53 +10,46 @@ The Argument passed to the SimpleAJAX function is JSON encoded(JAVASCRIPT OBJECT
 Parameters: 
 Arguments :JSON object to hold the following OBJECT VARIABLE
 {
-RequestVerb              : 'POST'/'GET'
-RequestUrl               : The server side pageurl
-Parameters               : The parameters to be supplied to the server
-CallbackMethod           : The method to be called on a successful request complete
-readystateCallBackMethod : This method gets called back every time there is a statechange in the ajax request
-                           The parameter passed to the function is the statevalue of the xmlHttpRequest  
-TimeOutCallBackMethod    : The method to be called on TimeOut
-TimeOut                  : Timeout in seconds
+    RequestVerb              : 'POST'/'GET'
+    RequestUrl               : The server side pageurl
+    Parameters               : The parameters to be supplied to the server
+    onSuccess                : The method to be called on a successful request complete
+    onComplete               : The method to be called when the ajax completes the request
+    TimeOutCallBackMethod    : The method to be called on TimeOut
+    TimeOut                  : Timeout in seconds
 }
 ***********************************************************************************/
 function AJAX(Arguments) {
 
-    // Variable to hold the object that is referring to the class.
-    var PresentInstance = this;
 
     // Declaring the Instance variables
-    this.RequestVerb = '';
-    this.RequestUrl = '';
-    this.Parameters = '';
-    this.CallbackMethod = '';
-    this.readystateCallBackMethod = '';
-    this.TimeOutCallBackMethod = '';
-    this.TimeOut ='';
+    var RequestVerb = '';
+    var RequestUrl = '';
+    var Parameters = '';
+    var onSuccess = '';
+    var onComplete = '';
+    var TimeOutCallBackMethod = '';
+    var TimeOut = '';
 
     // Initialising the Instance Variables with the parameter values passed to the argument
     if (Arguments.RequestVerb !== undefined) {
-        this.RequestVerb = Arguments.RequestVerb.toUpperCase();
+        RequestVerb = Arguments.RequestVerb.toUpperCase();
     } if (Arguments.RequestUrl !== undefined) {
-        this.RequestUrl = Arguments.RequestUrl;
+        RequestUrl = Arguments.RequestUrl;
     } if (Arguments.Parameters !== undefined) {
-        this.Parameters = Arguments.Parameters;
-    } if (Arguments.CallbackMethod !== undefined) {
-        this.CallbackMethod = Arguments.CallbackMethod;
-    } if (Arguments.readystateCallBackMethod !== undefined) {
-        this.readystateCallBackMethod = Arguments.readystateCallBackMethod;
+        Parameters = Arguments.Parameters;
+    } if (Arguments.onSuccess !== undefined) {
+        onSuccess = Arguments.onSuccess;
+    } if (Arguments.onComplete !== undefined) {
+        onComplete = Arguments.onComplete;
     } if (Arguments.TimeOutCallBackMethod !== undefined) {
-        this.TimeOutCallBackMethod = Arguments.TimeOutCallBackMethod;
+        TimeOutCallBackMethod = Arguments.TimeOutCallBackMethod;
     } if (Arguments.TimeOut !== undefined) {
-        this.TimeOut = Arguments.TimeOut;
-    } 
+        TimeOut = Arguments.TimeOut;
+    }
 
     /****************************************************************
-    Constructs a new HTTP Request object. IE and the rest of the
-    world have different ideas about what constitutes an HTTP
-    Request class, so we deal with that here.
-
-    Function Return: A new HTTP request object.
+    Constructs a new HTTP Request object.
     ****************************************************************/
     this.MakeNewRequestObject = function () {
         try { return new ActiveXObject("Msxml2.XMLHTTP"); }
@@ -71,46 +62,43 @@ function AJAX(Arguments) {
                 }
             }
         }
-    };
+    }; //end of the function MakeNewRequestObject
 
     /****************************************************************
     Here is where the actual call is made to the server.
     *****************************************************************/
     this.SendHTTPRequest = function () {
 
-        var XmlHttpRequstObject = this.MakeNewRequestObject();
-        XmlHttpRequstObject.open(this.RequestVerb, this.RequestUrl, true);
-        switch (this.RequestVerb) {
-            case 'POST':
-                XmlHttpRequstObject.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                break;
-            default:
-                break;
-        }
-        var AjaxTimeOut = setTimeout(function () {
-            XmlHttpRequstObject.abort();
-            if (PresentInstance.TimeOutCallBackMethod !=='') {
-                PresentInstance.TimeOutCallBackMethod(PresentInstance.Parameters);
-            }
-        }, this.TimeOut * 1000);
-        XmlHttpRequstObject.onreadystatechange = function () { PresentInstance.RequstObjectStateChanged(this, AjaxTimeOut); };
-        XmlHttpRequstObject.send(encodeURI(this.Parameters));
+        var XmlHttpRequestObject = this.MakeNewRequestObject();
+        XmlHttpRequestObject.open(RequestVerb, RequestUrl, true);
+        XmlHttpRequestObject.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        XmlHttpRequestObject.setRequestHeader("Pragma", "no-cache");
+        XmlHttpRequestObject.setRequestHeader("Cache-Control", "no-cache");
 
-    };
+        /****************************************************************
+        Assigning The setTimeout function to the  XmlHttpRequestObject
+        *****************************************************************/
+        var AjaxTimeOut = setTimeout(function () {
+            XmlHttpRequestObject.abort();
+            if (TimeOutCallBackMethod !== '') {
+                TimeOutCallBackMethod(Parameters);
+            }
+        }, TimeOut * 1000);
+
+        XmlHttpRequestObject.onreadystatechange = function () { RequstObjectStateChanged(this, AjaxTimeOut); };
+        XmlHttpRequestObject.send(encodeURI(Parameters));
+
+    }; // end of the function SendHTTPRequest
+
+
     /*********************************************************************************************
     Here is where the onreadystatechange event of the ajaxrequestobject is handled.
     Parameters: 
-    XmlHttpRequstObject : The present instance of the XmlHttp object passed to the function
+    XmlHttpRequestObject : The present instance of the XmlHttp object passed to the function
     **********************************************************************************************/
-    this.RequstObjectStateChanged = function (XmlHttpRequstObject, AjaxTimeOut) {
-
-        // calling the userdefined function for the readystate change of the request object
-        if (PresentInstance.readystateCallBackMethod !== '') {
-            PresentInstance.readystateCallBackMethod(XmlHttpRequstObject.readyState);
-        }
-        
+    RequstObjectStateChanged = function (XmlHttpRequestObject, AjaxTimeOut) {
         // Checkinng the state of the httprequest
-        switch (XmlHttpRequstObject.readyState) {
+        switch (XmlHttpRequestObject.readyState) {
             case 0: // UNINITIALIZED
                 break;
             case 1: // LOADING
@@ -120,16 +108,26 @@ function AJAX(Arguments) {
             case 3: // INTERACTIVE
                 break;
             case 4: //COMPLETED
-                clearTimeout(AjaxTimeOut); // clearTimeOut the ajax time out so that the counter counting the requst time out stops
-                if (XmlHttpRequstObject.status === 200) {
-                    if (PresentInstance.CallbackMethod !== '') {
-                        PresentInstance.CallbackMethod(XmlHttpRequstObject.responseText);
+                /*******************************************
+                Clears the AjaxTimeOut variable 
+                *******************************************/
+                clearTimeout(AjaxTimeOut);
+                /*******************************************
+                Calls the onComplete function if defined 
+                *******************************************/
+                if (onComplete !== '') { onComplete(); }
+                /*******************************************
+                Checks if the request status is success and calls the function
+                *******************************************/
+                if (XmlHttpRequestObject.status === 200) {
+                    if (onSuccess !== '') {
+                        onSuccess(XmlHttpRequestObject.responseText);
                     }
                 }
                 break;
-        }
-    };
-};
+        } // End of the Switch Statement
+    }; // End of the function RequstObjectStateChanged
+};// End of the function Ajax()
 
 /*******************************************************************************
 SupportsAjax function
@@ -137,7 +135,7 @@ Purpose : can be used to check if the browser supports Ajax or not
 ******************************************************************************/
 if (typeof SupportsAjax === 'undefined') {
     function SupportsAjax() {
-        if (new AJAX().MakeNewRequestObject()) {
+        if (new AJAX({}).MakeNewRequestObject()) {
             return true;
         }
         return false;
