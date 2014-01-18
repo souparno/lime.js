@@ -22,6 +22,6 @@ TimeOutCallBackMethod : Invoked when a request gets timed out before its lifecyc
 
 
 Examples:
-<a href="runnable.com/UtqkE04segF2AAAK/how-to-do-ajax-threading-with-a-object-oriented-javascript-for-javscript-class">
+<a href="https://runnable.com/UtqkE04segF2AAAK/how-to-do-ajax-threading-with-a-object-oriented-javascript-for-javscript-class">
 an example about Ajax Queuing/Ajax Threading</a>
 
