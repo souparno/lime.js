@@ -3,7 +3,7 @@ lime.js
 
 lime.js is a simple ajax class structure designed in javascript.
 
-Ajax options - The Ajax classe constitutes some set of options and callbacks
+<p>Ajax options - The Ajax class constitutes some set of options and callbacks</p>
 -----------------------------------------------------------------------------------------------------
 
 Common options
