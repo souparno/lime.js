@@ -17,10 +17,11 @@ Common options
 
 Common callbacks
 ----------------------------------------------------------------------------------------------------
-onSuccess             : Invoked when a request completes and its status code is defined (200).
-onComplete            : Triggered at the very end of a request's life-cycle.
-TimeOutCallBackMethod : Invoked when a request gets timed out before its lifecycle is complete.
-
+<ul>
+<li>onSuccess             : Invoked when a request completes and its status code is defined (200).</li>
+<li>onComplete            : Triggered at the very end of a request's life-cycle.</li>
+<li>TimeOutCallBackMethod : Invoked when a request gets timed out before its lifecycle is complete.</li>
+</ul>
 
 Examples:
 <b>The folder includes an example of Ajax Queuing/Ajax Threading</b>
