@@ -10,13 +10,13 @@ The Argument passed to the SimpleAJAX function is JSON encoded(JAVASCRIPT OBJECT
 Parameters: 
 Arguments :JSON object to hold the following OBJECT VARIABLE
 {
-    RequestVerb              : 'POST'/'GET'
-    RequestUrl               : The server side pageurl
-    Parameters               : The parameters to be supplied to the server
-    onSuccess                : The method to be called on a successful request complete
-    onComplete               : The method to be called when the ajax completes the request
-    TimeOutCallBackMethod    : The method to be called on TimeOut
-    TimeOut                  : Timeout in seconds
+RequestVerb              : 'POST'/'GET'
+RequestUrl               : The server side pageurl
+Parameters               : The parameters to be supplied to the server
+onSuccess                : The method to be called on a successful request complete
+onError                  : The method to be called on when the request gets completed with an error
+onComplete               : The method to be called when the ajax completes the request
+TimeOut                  : Timeout in seconds
 }
 ***********************************************************************************/
 function AJAX(Arguments) {
@@ -27,9 +27,10 @@ function AJAX(Arguments) {
     var RequestUrl = '';
     var Parameters = '';
     var onSuccess = '';
+    var onError = '';
     var onComplete = '';
-    var TimeOutCallBackMethod = '';
     var TimeOut = '';
+    var RequestState = ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
 
     // Initialising the Instance Variables with the parameter values passed to the argument
     if (Arguments.RequestVerb !== undefined) {
@@ -40,11 +41,11 @@ function AJAX(Arguments) {
         Parameters = Arguments.Parameters;
     } if (Arguments.onSuccess !== undefined) {
         onSuccess = Arguments.onSuccess;
+    } if (Arguments.onError !== undefined) {
+        onError = Arguments.onError;
     } if (Arguments.onComplete !== undefined) {
         onComplete = Arguments.onComplete;
-    } if (Arguments.TimeOutCallBackMethod !== undefined) {
-        TimeOutCallBackMethod = Arguments.TimeOutCallBackMethod;
-    } if (Arguments.TimeOut !== undefined) {
+    }if (Arguments.TimeOut !== undefined) {
         TimeOut = Arguments.TimeOut;
     }
 
@@ -80,9 +81,6 @@ function AJAX(Arguments) {
         *****************************************************************/
         var AjaxTimeOut = setTimeout(function () {
             XmlHttpRequestObject.abort();
-            if (TimeOutCallBackMethod !== '') {
-                TimeOutCallBackMethod(Parameters);
-            }
         }, TimeOut * 1000);
 
         XmlHttpRequestObject.onreadystatechange = function () { RequstObjectStateChanged(this, AjaxTimeOut); };
@@ -98,16 +96,12 @@ function AJAX(Arguments) {
     **********************************************************************************************/
     RequstObjectStateChanged = function (XmlHttpRequestObject, AjaxTimeOut) {
         // Checkinng the state of the httprequest
-        switch (XmlHttpRequestObject.readyState) {
-            case 0: // UNINITIALIZED
-                break;
-            case 1: // LOADING
-                break;
-            case 2: // LOADED
-                break;
-            case 3: // INTERACTIVE
-                break;
-            case 4: //COMPLETED
+        switch (RequestState[XmlHttpRequestObject.readyState]) {
+            case 'Uninitialized': break;
+            case 'Loading'      : break;
+            case 'Loaded'       : break;
+            case 'Interactive'  : break;
+            case 'Complete':
                 /*******************************************
                 Clears the AjaxTimeOut variable 
                 *******************************************/
@@ -123,11 +117,16 @@ function AJAX(Arguments) {
                     if (onSuccess !== '') {
                         onSuccess(XmlHttpRequestObject.responseText);
                     }
+                } else {
+                    if (onError !== '') {
+                        onError(XmlHttpRequestObject.status,Parameters);
+                    }
                 }
                 break;
         } // End of the Switch Statement
     }; // End of the function RequstObjectStateChanged
-};// End of the function Ajax()
+
+}; // End of the function Ajax()
 
 /*******************************************************************************
 SupportsAjax function
@@ -141,3 +140,5 @@ if (typeof SupportsAjax === 'undefined') {
         return false;
     };
 }
+
+
