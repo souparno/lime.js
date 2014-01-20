@@ -100,7 +100,7 @@
 		/* ]]> */
 		</style>
 		<!-- This file contains the threading. -->
-                <script src="ajax.js" type="text/javascript"></script>
+                <script src="../../lime.js/ajax.js" type="text/javascript"></script>
 		<!-- These are our internal functions for running the tests. -->
 		<script type="text/javascript">
                     
@@ -169,8 +169,8 @@
                                                 RequestUrl: 'server.php',
                                                 Parameters: "id="+in_id,
                                                 onSuccess:SimpleCallback,
-                                                TimeOutCallBackMethod:TimeoutCallback,
-                                                TimeOut:'5'
+                                                onError:ErrorCallback,
+                                                TimeOut:'6'
                                                   });
                                 obj.SendHTTPRequest();
                                 
@@ -193,7 +193,7 @@
 					in_param: This is the parameter that were supplied 
                                         when the call was made.
 			******************************************************************/
-			function TimeoutCallback(in_param){
+			function ErrorCallback(status,in_param){
 				SetPhase4 (in_param.substring(3));
 				alert ( "Timeout! ("+in_param.substring(3)+")" );
 			}
