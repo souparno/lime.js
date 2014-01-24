@@ -19,7 +19,7 @@ onComplete               : The method to be called when the ajax completes the r
 TimeOut                  : Timeout in seconds
 }
 ***********************************************************************************/
-function AJAX(Arguments) {
+function Ajax(Arguments) {
 
 
     // Declaring the Instance variables
@@ -83,7 +83,7 @@ function AJAX(Arguments) {
             XmlHttpRequestObject.abort();
         }, TimeOut * 1000);
 
-        XmlHttpRequestObject.onreadystatechange = function () { RequstObjectStateChanged(this, AjaxTimeOut); };
+        XmlHttpRequestObject.onreadystatechange = function () { RequestObjectStateChanged(this, AjaxTimeOut); };
         XmlHttpRequestObject.send(encodeURI(Parameters));
 
     }; // end of the function SendHTTPRequest
@@ -94,7 +94,7 @@ function AJAX(Arguments) {
     Parameters: 
     XmlHttpRequestObject : The present instance of the XmlHttp object passed to the function
     **********************************************************************************************/
-    RequstObjectStateChanged = function (XmlHttpRequestObject, AjaxTimeOut) {
+    RequestObjectStateChanged = function (XmlHttpRequestObject, AjaxTimeOut) {
         // Checkinng the state of the httprequest
         switch (RequestState[XmlHttpRequestObject.readyState]) {
             case 'Uninitialized': break;
