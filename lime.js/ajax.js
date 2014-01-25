@@ -19,7 +19,7 @@ onComplete               : The method to be called when the ajax completes the r
 TimeOut                  : Timeout in seconds
 }
 ***********************************************************************************/
-function Ajax(Arguments) {
+function AJAX(Arguments) {
 
 
     // Declaring the Instance variables
