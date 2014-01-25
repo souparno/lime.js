@@ -19,8 +19,8 @@ Common callbacks
 ----------------------------------------------------------------------------------------------------
 <ul>
 <li>onSuccess             : Invoked when a request completes and its status code is defined (200).</li>
-<li>onComplete            : Triggered at the very end of a request's life-cycle.</li>
 <li>onError               : Invoked when an error occurs in the HttpRequest(ex. timeout).</li>
+<li>onComplete            : Triggered at the very end of a request's life-cycle.</li>
 </ul>
 
 Examples:
