@@ -110,7 +110,7 @@
 				This draws all of the buttons on the page, assigning IDs.
 			******************************************************************/
 			function PopulateTriggers(){
-				if(SupportsAjax()){
+				if(true){
 					var form_contents='<h3 title="The images below represent individual HTTPRequests. Click on a button to start a request." style="text-align:center;margin:0;padding:0;padding-bottom:4px">Click on an image to start an HTTPRequest</h3>';
 					for(var i=0; i<g_number_of_images; i++){
 						var id="button_"+i;
@@ -164,7 +164,7 @@
 			*******************************************************************/
 			function BangOnAButton(in_id){
 				SetPhase0(in_id);
-                                var obj=new AJAX({ 
+                                var obj=new Ajax({ 
                                                 RequestVerb: 'POST',
                                                 RequestUrl: 'server.php',
                                                 Parameters: "id="+in_id,
