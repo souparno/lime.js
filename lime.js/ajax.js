@@ -6,17 +6,17 @@ Copyright    : Go ahead and use this as you wish.  ©2014-2015
 ************************************************************************************/
 
 /***********************************************************************************
-The Argument passed to the SimpleAJAX function is JSON encoded(JAVASCRIPT OBJECT NOTATION)
+The Argument passed to the constructor of the Ajax Class is JSON encoded(JAVASCRIPT OBJECT NOTATION)
 Parameters: 
 Arguments :JSON object to hold the following OBJECT VARIABLE
 {
-RequestVerb              : 'POST'/'GET'
-RequestUrl               : The server side pageurl
-Parameters               : The parameters to be supplied to the server
-onSuccess                : The method to be called on a successful request complete
-onError                  : The method to be called on when the request gets completed with an error
-onComplete               : The method to be called when the ajax completes the request
-TimeOut                  : Timeout in seconds
+	RequestVerb              : 'POST'/'GET'
+	RequestUrl               : The server side pageurl
+	Parameters               : The parameters to be supplied to the server
+	onSuccess                : The method to be called on a successful request complete
+	onError                  : The method to be called on when the request gets completed with an error
+	onComplete               : The method to be called when the ajax completes the request
+	TimeOut                  : Timeout in seconds
 }
 ***********************************************************************************/
 
